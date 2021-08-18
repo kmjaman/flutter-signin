@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(AuthApp());
 }
 
@@ -20,10 +24,11 @@ class _AuthAppState extends State<AuthApp> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Auth User'),
+          title: Text('Auth User (Logged ' + (user == null ? 'out' : 'in') + ')'),
         ),
         body: Center(
           child: Column(
@@ -33,9 +38,33 @@ class _AuthAppState extends State<AuthApp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  ElevatedButton(onPressed: () {}, child: Text('Sign Up')),
-                  ElevatedButton(onPressed: () {}, child: Text('Sign In')),
-                  ElevatedButton(onPressed: () {}, child: Text('Log Out')),
+                  ElevatedButton(onPressed: () async{
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email.text,
+                      password: pass.text,
+                    );
+                    setState(() {
+                      
+                    });
+                  },
+                  child: Text('Sign Up')),
+                  ElevatedButton(onPressed: () async{
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: email.text,
+                      password: pass.text,
+                    );
+                    setState(() {
+                      
+                    });
+                  },
+                  child: Text('Sign In')),
+                  ElevatedButton(onPressed: () async{
+                    await FirebaseAuth.instance.signOut();
+                    setState(() {
+                      
+                    });
+                  },
+                  child: Text('Log Out')),
                 ],
               ),
             ],
